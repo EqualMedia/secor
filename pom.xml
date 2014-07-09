@@ -151,6 +151,11 @@
             <version>1.5.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>1.8.2</version>
+        </dependency>
     </dependencies>
 
     <build>

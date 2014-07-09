@@ -44,6 +44,8 @@ public class FileUtil {
 
     public static FileSystem getFileSystem(String path) throws IOException {
         Configuration conf = new Configuration();
+        LOG.info("*** AWS Access Key " + mConfig.getAwsAccessKey());
+        LOG.info("*** AWS Secret Key " + mConfig.getAwsSecretKey());
         if (mConfig != null) {
             conf.set("fs.s3n.awsAccessKeyId", mConfig.getAwsAccessKey());
             conf.set("fs.s3n.awsSecretAccessKey", mConfig.getAwsSecretKey());

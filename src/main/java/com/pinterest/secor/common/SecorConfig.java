@@ -16,6 +16,7 @@
  */
 package com.pinterest.secor.common;
 
+import com.state.secor.util.SecorAWSCredentialsProviderChain;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class SecorConfig {
     private final PropertiesConfiguration mProperties;
+    private final SecorAWSCredentialsProviderChain mAws;
 
     public static SecorConfig load() throws ConfigurationException {
         // Load the default configuration file first
@@ -38,6 +40,7 @@ public class SecorConfig {
 
     private SecorConfig(PropertiesConfiguration properties) {
         mProperties = properties;
+        mAws = new SecorAWSCredentialsProviderChain();
     }
 
     public String getKafkaSeedBrokerHost() {
@@ -125,10 +128,16 @@ public class SecorConfig {
     }
 
     public String getAwsAccessKey() {
+        if(mAws != null) {
+            return mAws.getCredentials().getAWSAccessKeyId();
+        }
         return getString("aws.access.key");
     }
 
     public String getAwsSecretKey() {
+        if(mAws != null) {
+            return mAws.getCredentials().getAWSSecretKey();
+        }
         return getString("aws.secret.key");
     }
 
