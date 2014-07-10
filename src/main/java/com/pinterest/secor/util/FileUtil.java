@@ -16,6 +16,7 @@
  */
 package com.pinterest.secor.util;
 
+import com.state.secor.util.SecorAWSCredentialsProviderChain;
 import com.pinterest.secor.common.SecorConfig;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
@@ -44,12 +45,20 @@ public class FileUtil {
 
     public static FileSystem getFileSystem(String path) throws IOException {
         Configuration conf = new Configuration();
-        LOG.info("*** AWS Access Key " + mConfig.getAwsAccessKey());
-        LOG.info("*** AWS Secret Key " + mConfig.getAwsSecretKey());
-        if (mConfig != null) {
-            conf.set("fs.s3n.awsAccessKeyId", mConfig.getAwsAccessKey());
-            conf.set("fs.s3n.awsSecretAccessKey", mConfig.getAwsSecretKey());
+        SecorAWSCredentialsProviderChain awsCreds = new SecorAWSCredentialsProviderChain();
+        String awsAccessKey = "";
+        String awsSecretKey = "";
+
+        if(awsCreds != null) {
+            awsAccessKey = awsCreds.getCredentials().getAWSAccessKeyId();
+            awsSecretKey = awsCreds.getCredentials().getAWSSecretKey();
+        } else if (mConfig != null) {
+            awsAccessKey = mConfig.getAwsAccessKey();
+            awsSecretKey = mConfig.getAwsSecretKey();
         }
+
+        conf.set("fs.s3n.awsAccessKeyId", awsAccessKey);
+        conf.set("fs.s3n.awsSecretAccessKey", awsSecretKey);
         return FileSystem.get(URI.create(path), conf);
     }
 
